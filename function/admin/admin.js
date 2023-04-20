@@ -92,6 +92,13 @@ const adminFunction = {
       console.log(error);
     }
 
+  },
+  deleteAdmin:async(data)=>{
+    const removeAdmin= await modelAdmin.deleteOne({_id:data})
+    console.log(removeAdmin)
+    return {
+      message:"admin deleted succesfully",removeAdmin
+    }
   }
 }
 

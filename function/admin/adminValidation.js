@@ -10,4 +10,13 @@ const value= joi.object({
 return value.validate(data)
 }
 
+const adminLoginVal = (data) => {
+    const value = joi.object({
+        email:joi.string().required().email().min(5).max(21),
+        password: joi.string().required().min(4).max(10)
+    })
+    return value.validate(data)
+}
+
 module.exports.adminValidation=adminValidation 
+module.exports.adminLoginVal=adminLoginVal
