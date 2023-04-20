@@ -9,7 +9,7 @@ module.exports=function(req,res,next){
     }try {
         const verified=jwt.verify(token,process.env.SC)
         console.log(verified);
-        req.verified=verified 
+        req.verified=verified
         next()
     } catch (error) {
         console.log(error);

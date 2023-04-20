@@ -1,6 +1,7 @@
 const modelAdmin = require('../../model/adminModel')
 const bcrypt = require('bcrypt')
 const jwt = require("jsonwebtoken")
+const bookModel= require('../../model/Book')
 
 
 
@@ -98,6 +99,47 @@ const adminFunction = {
     console.log(removeAdmin)
     return {
       message:"admin deleted succesfully",removeAdmin
+    }
+  },
+  checkAdmin:async (check)=>{
+    const doCheck= await modelAdmin.findById(check.id)
+    if(!doCheck)
+    {
+        return{
+      message:"no admin previlages",
+    }
+    }
+  
+    return{
+      isAdmin:true
+    }
+  },
+  addProduct: async(product)=>{
+    let itemExist= await bookModel.findOne({
+      name:product.name
+    })
+    if(itemExist)return {
+      message:"Item exist",
+      name:product.name,
+      _id:null
+    }
+    try {
+      const books=new bookModel({
+       name:product.name,
+       auther:product.auther,
+       language:product.language,
+       _id:product._id
+      })
+
+      const savedBook= await books.save()
+      return {
+        message:'Book added Succesfully',
+        name:savedBook.name,
+        language:savedBook.language,
+        _id:savedBook._id
+      }
+    } catch (error) {
+      console.log(error);
     }
   }
 }
