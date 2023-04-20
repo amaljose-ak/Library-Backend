@@ -10,4 +10,4 @@ const value= joi.object({
 return value.validate(data)
 }
 
-module.exports.adminValidation=adminValidation
+module.exports.adminValidation=adminValidation 
