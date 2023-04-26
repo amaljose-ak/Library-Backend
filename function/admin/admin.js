@@ -1,7 +1,7 @@
 const modelAdmin = require('../../model/adminModel')
 const bcrypt = require('bcrypt')
 const jwt = require("jsonwebtoken")
-const bookModel= require('../../model/Book')
+const bookModel = require('../../model/Book')
 
 
 
@@ -30,7 +30,7 @@ const adminFunction = {
     }
   },
   Login: async (data) => {
-    const adminEx = await modelAdmin.findOne({ email:data.email })
+    const adminEx = await modelAdmin.findOne({ email: data.email })
     if (!adminEx) {
       return {
         statuscode: 401,
@@ -41,24 +41,24 @@ const adminFunction = {
       }
     }
 
-    const isVerified= await bcrypt.compare(data.password,adminEx.password)
+    const isVerified = await bcrypt.compare(data.password, adminEx.password)
     console.log(isVerified);
-    if(!isVerified){
-    
-      return{ 
-        statuscode:401,
-        message:"credentials missmatch",
-        success:false,
-        token:false
+    if (!isVerified) {
+
+      return {
+        statuscode: 401,
+        message: "credentials missmatch",
+        success: false,
+        token: false
       }
-    }else{
+    } else {
       try {
-        const tolken= await jwt.sign({_id:adminEx._id},process.env.SC)
+        const tolken = await jwt.sign({ _id: adminEx._id }, process.env.SC)
         return {
-          statuscode:200,
-          message:'login succesfully',
-          success:true,
-          token:tolken
+          statuscode: 200,
+          message: 'login succesfully',
+          success: true,
+          token: tolken
         }
       } catch (error) {
         console.log(error);
@@ -94,52 +94,89 @@ const adminFunction = {
     }
 
   },
-  deleteAdmin:async(data)=>{
-    const removeAdmin= await modelAdmin.deleteOne({_id:data})
+  deleteAdmin: async (data) => {
+    const removeAdmin = await modelAdmin.deleteOne({ _id: data})
     console.log(removeAdmin)
     return {
-      message:"admin deleted succesfully",removeAdmin
+      message: "admin deleted succesfully", removeAdmin
     }
   },
-  checkAdmin:async (check)=>{
-    const doCheck= await modelAdmin.findById(check.id)
-    if(!doCheck)
-    {
-        return{
-      message:"no admin previlages",
+  checkAdmin: async (check) => {
+    const doCheck = await modelAdmin.findOne({ _id:check })
+    // console.log(check);
+    console.log(doCheck);
+    if(doCheck){
+      return {
+        isAdmin:true,
+        name:check.name,
+        email:check.email
+      }
+    
+    }else{
+      console.log('You are not authorized to perform this action.');
     }
-    }
-  
-    return{
-      isAdmin:true
-    }
+ 
   },
-  addProduct: async(product)=>{
-    let itemExist= await bookModel.findOne({
-      name:product.name
+  addProduct: async (product) => {
+    let itemExist = await bookModel.findOne({
+      name: product.name
     })
-    if(itemExist)return {
-      message:"Item exist",
-      name:product.name,
-      _id:null
+    if (itemExist) return {
+      message: "Item exist",
+      name: product.name,
+      _id: null
     }
     try {
-      const books=new bookModel({
-       name:product.name,
-       auther:product.auther,
-       language:product.language,
-       _id:product._id
+      const books = new bookModel({
+        name: product.name,
+        auther: product.auther,
+        language: product.language,
+        _id: product._id
       })
 
-      const savedBook= await books.save()
+      const savedBook = await books.save()
       return {
-        message:'Book added Succesfully',
-        name:savedBook.name,
-        language:savedBook.language,
-        _id:savedBook._id
+        message: 'Book added Succesfully',
+        name: savedBook.name,
+        language: savedBook.language,
+        _id: savedBook._id
       }
     } catch (error) {
       console.log(error);
+    }
+  },
+  updateBook: async (data, body) => {
+    let isProduct = false
+    const newproduct = await bookModel.findById(data.id)
+    console.log(data.id)
+    if (newproduct) {
+      isProduct = true
+    } else {
+      return {
+        message: "no item found"
+      }
+    }
+    
+    if (isProduct === true) {
+
+      const updateBook = await bookModel.updateOne({ _id: data.id },
+        { $set: { name: body.name, auther: body.auther, language: body.language } })
+      return {
+        message: "Book Updated",updateBook
+      }
+
+    }
+
+
+  },
+  viewBooks: async () => {
+    const viewproduct = await bookModel.find()
+    return viewproduct
+  },
+  deleteBook: async (data) => {
+    const deleted = await bookModel.deleteOne({ _id: data })
+    return {
+      message: "deleted successfully", deleted
     }
   }
 }
