@@ -50,4 +50,12 @@ router.delete('/delete/:id',async(req,res)=>{
         message:deletduser.message
     })
 })
+
+
+// view books
+router.get('/viewBook',async(req,res)=>{
+    const viewdBook= await userFunction.viewBook()
+    return res.json({viewdBook})
+})
+
 module.exports = router  

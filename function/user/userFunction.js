@@ -1,6 +1,7 @@
 const userModel = require('../../model/userModel')
 const bcrypt = require('bcrypt')
 const jwt = require("jsonwebtoken")
+const bookModel=require('../../model/Book')
 
 
 
@@ -104,7 +105,10 @@ const userfunction = {
           message: "user deleted successfully",
         };
       },
-    
+    viewBook:async(data)=>{
+        const viewBooks= await bookModel.find()
+        return viewBooks
+    }
 
 }
 
