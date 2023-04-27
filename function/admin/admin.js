@@ -117,7 +117,7 @@ const adminFunction = {
     }
  
   },
-  addProduct: async (product) => {
+  addProduct: async (product) => { 
     let itemExist = await bookModel.findOne({
       name: product.name
     })

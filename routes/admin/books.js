@@ -14,11 +14,15 @@ router.post('/addBook', verify, async (req, res) => {
     const verifyb = await adminFunc.checkAdmin(req.verified)
 
     if (verifyb.isAdmin === true) {
+
         const { error } = BookValidation(req.body)
-        return res.json({
-            error: error.details[0].message
+        if(error){
+             return res.json({
+            error:error.details[0].message
         })
-    }
+    
+        }
+       
     const addedBook = await adminFunc.addProduct(req.body)
     return res.json({
         message: addedBook.message,
@@ -28,7 +32,7 @@ router.post('/addBook', verify, async (req, res) => {
 
 
     })
-
+}
 })
 
 
